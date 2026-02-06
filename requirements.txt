@@ -1,0 +1,4 @@
+﻿fastapi
+uvicorn[standard]
+fastmcp
+supabase>=2.0.0
