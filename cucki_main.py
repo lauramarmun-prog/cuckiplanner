@@ -1,4 +1,4 @@
-import os
+﻿import os
 from typing import Dict, Any, Optional
 
 from fastapi import FastAPI
@@ -6,22 +6,18 @@ from fastmcp import FastMCP
 from supabase import create_client, Client
 
 
-DEFAULT_SUPABASE_URL = "https://xnostrbrajavjrmxaysw.supabase.co"
-DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhub3N0cmJyYWphdmpybXhheXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzA1NTIsImV4cCI6MjA4NTYwNjU1Mn0.aqBW40xUYMOrnTCUpj0h9V6kgkMrvFvL8C7ypSAC45Y"
+url = os.environ["SUPABASE_URL"]
+key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]  # esta, no anon
+supabase = create_client(url, key)
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", DEFAULT_SUPABASE_URL)
-SUPABASE_KEY = (
-    os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-    or os.getenv("SUPABASE_ANON_KEY")
-    or DEFAULT_SUPABASE_ANON_KEY
-)
+print("has_service_role:", "SUPABASE_SERVICE_ROLE_KEY" in os.environ)
+print("service_role_len:", len(os.environ.get("SUPABASE_SERVICE_ROLE_KEY","")))
+print("anon_len:", len(os.environ.get("SUPABASE_ANON_KEY","")))
 
 DEFAULT_CUCKI_USER_ID = os.getenv("CUCKI_DEFAULT_USER_ID", "faf1e3b1-1bca-44b6-a36d-8f4f18138f56")
 SHOPPING_TABLE = "madriguera_shopping_list"
 
-sb: Optional[Client] = None
-if SUPABASE_URL and SUPABASE_KEY:
-    sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+sb: Optional[Client] = supabase
 
 
 def _db() -> Client:
@@ -145,3 +141,6 @@ def root():
 
 
 app.mount("/mcp", mcp_app)
+
+
+
